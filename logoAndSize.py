@@ -14,7 +14,9 @@ logo_width, logo_height = logo_im.size
 os.makedirs('withLogo', exist_ok=True)
 
 for filename in os.listdir('.'):
-    if not(filename.endswith('.png') or filename.endswith('.jpg')) or filename == LOGO_FILENAME:
+    if not (filename.lower().endswith('.png') or filename.lower().endswith('.jpg')
+            or filename.lower().endswith('.gif') or filename.lower().endswith('bmp')) \
+            or filename == LOGO_FILENAME:
         continue
 
     image = Image.open(filename)
@@ -31,8 +33,16 @@ for filename in os.listdir('.'):
         print(f'Resizing {filename}...')
         image = image.resize((width, height))
 
-        print(f'Adding logo to {filename}...')
-        image.paste(logo_im, (width - logo_width, height - logo_height), logo_im)
+        if width < logo_width * 2 or height < logo_height * 2:
+            print("The logo wouldn't look good on an image this size so "
+              "it is being skipped. The unadorned image will still be saved "
+              "to the 'withLogo' directory.")
+        else:
+            print('Adding logo to {}...'.format(filename))
+            image.paste(logo_im, (width - logo_width, height - logo_height), logo_im)
+
+        
 
         image.save(os.path.join('withLogo', filename))
+        print(image.getdata())
 
